@@ -21,7 +21,7 @@ ota:
 number:
   - platform: template
     id: light_red
-    name: Light ${name} red
+    name: ${name} R
     icon: mdi:alpha-r-box
     update_interval: never
     optimistic: true
@@ -32,7 +32,7 @@ number:
 
   - platform: template
     id: light_green
-    name: Light ${name} green
+    name: ${name} G
     icon: mdi:alpha-g-box
     update_interval: never
     optimistic: true
@@ -43,7 +43,7 @@ number:
 
   - platform: template
     id: light_blue
-    name: Light ${name} blue
+    name: ${name} B
     icon: mdi:alpha-b-box
     update_interval: never
     optimistic: true
@@ -54,7 +54,7 @@ number:
 
   - platform: template
     id: brightness
-    name: Light ${name} brightness
+    name: ${name} brightness
     icon: mdi:alpha-b-box-outline
     update_interval: never
     optimistic: true
@@ -65,7 +65,7 @@ number:
 
   - platform: template
     id: off_time
-    name: Light ${name} off time
+    name: ${name} off time
     icon: mdi:alpha-t-box-outline
     update_interval: never
     optimistic: true
