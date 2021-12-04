@@ -7,9 +7,9 @@ cards:
       card:
         - background: |
             [[[
-              var red = states["number.light_shelf_red"].state;
-              var green = states["number.light_shelf_green"].state;
-              var blue = states["number.light_shelf_blue"].state;
+              var red = states["number.shelf_r"].state;
+              var green = states["number.shelf_g"].state;
+              var blue = states["number.shelf_b"].state;
               return 'radial-gradient(rgb(0,0,0,0%), 80%, rgb('+(red)+','+(green)+','+(blue)+')';
             ]]]
     tap_action:
@@ -20,15 +20,10 @@ cards:
       - type: entities
         entities:
           - entity: switch.auto_shelf_light
-          - entity: number.light_shelf_red
-            type: custom:slider-entity-row
-          - entity: number.light_shelf_green
-            type: custom:slider-entity-row
-          - entity: number.light_shelf_blue
-            type: custom:slider-entity-row
-          - entity: number.light_shelf_brightness
-            type: custom:slider-entity-row
-          - entity: number.light_shelf_off_time
-            type: custom:slider-entity-row
+          - entity: number.shelf_r
+          - entity: number.shelf_g
+          - entity: number.shelf_b
+          - entity: number.shelf_brightness
+          - entity: number.shelf_off_time
         state_color: false
         show_header_toggle: false
