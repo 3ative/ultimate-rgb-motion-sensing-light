@@ -1,0 +1,180 @@
+esphome:
+  name: light-shelf
+  platform: ESP8266
+  board: esp01_1m
+
+
+substitutions:
+  # Enter the name of the Room here
+  name: Shelf
+  motion_sensor: binary_sensor.bedroom_pir2
+
+
+wifi:
+  ssid: !secret ssid
+  password: !secret wifi_password
+
+logger:
+api:
+ota:
+
+number:
+  - platform: template
+    id: light_red
+    name: Light ${name} red
+    icon: mdi:alpha-r-box
+    update_interval: never
+    optimistic: true
+    min_value: 0
+    max_value: 255
+    restore_value: true
+    step: 1
+
+  - platform: template
+    id: light_green
+    name: Light ${name} green
+    icon: mdi:alpha-g-box
+    update_interval: never
+    optimistic: true
+    min_value: 0
+    max_value: 255
+    restore_value: true
+    step: 1
+
+  - platform: template
+    id: light_blue
+    name: Light ${name} blue
+    icon: mdi:alpha-b-box
+    update_interval: never
+    optimistic: true
+    min_value: 0
+    max_value: 255
+    restore_value: true
+    step: 1
+
+  - platform: template
+    id: brightness
+    name: Light ${name} brightness
+    icon: mdi:alpha-b-box-outline
+    update_interval: never
+    optimistic: true
+    min_value: 0
+    max_value: 100
+    restore_value: true
+    step: 1
+
+  - platform: template
+    id: off_time
+    name: Light ${name} off time
+    icon: mdi:alpha-t-box-outline
+    update_interval: never
+    optimistic: true
+    min_value: 1
+    max_value: 20
+    restore_value: true
+    step: 1    
+
+binary_sensor:
+  - platform: homeassistant
+    id: motion_sensor
+    entity_id: ${motion_sensor}
+    internal: true
+    on_press:
+      then:
+        - if:
+            condition:
+              and:
+                - light.is_off: led_lights
+                - switch.is_on: auto_mode
+            then:
+              - light.turn_on: led_lights
+              - lambda: !lambda |-
+                  id(timer).publish_state(true);
+            else:
+              - script.stop: timeout
+    on_release:
+      then:
+        - if:
+            condition:
+              - binary_sensor.is_on: timer
+            then:
+              - script.execute: timeout 
+
+  - platform: template
+    id: timer
+
+  - platform: template
+    id: psu_controller
+    lambda: !lambda |-
+      return id(led_lights).current_values.is_on();
+    on_press:
+      then:
+        - switch.turn_on: relay
+    on_release:
+      then:
+        - switch.turn_off: relay
+
+switch:
+  - platform: template
+    id: auto_mode
+    name: Auto ${name} light
+    icon: mdi:lightbulb-auto
+    optimistic: true
+    on_turn_off:
+      then:
+        - light.turn_off: led_lights
+        - lambda: !lambda |-
+            id(timer).publish_state(false);
+
+  - platform: gpio
+    pin: GPIO12
+    id: relay
+    internal: true
+
+script:
+  - id: timeout
+    mode: restart
+    then:
+      - if:
+          condition:
+            - binary_sensor.is_on: timer
+          then:
+            - delay: !lambda return id(off_time).state * 60000;
+            - light.turn_off: led_lights
+            - lambda: !lambda |-
+                id(timer).publish_state(false);
+
+light:
+  - platform: rgb
+    name: "${name} Lights"
+    id: led_lights
+    red: red
+    green: green
+    blue: blue
+    on_turn_on:
+      - lambda: !lambda |
+          auto call = id(led_lights).turn_on();
+          call.set_color_mode(ColorMode::RGB);
+          
+          call.set_rgb( (255*0.00001531864)*id(light_red).state,
+          (255*0.00001531864)*id(light_green).state,
+          (255*0.00001531864)*id(light_blue).state);
+          
+          call.set_brightness(id(brightness).state /100);
+          call.perform();
+
+output:
+  - platform: esp8266_pwm
+    id: red
+    pin: GPIO1
+  - platform: esp8266_pwm
+    id: green
+    pin: GPIO3
+  - platform: esp8266_pwm
+    id: blue
+    pin: GPIO2
+
+status_led:
+  pin:
+    number: GPIO13
+    inverted: yes
