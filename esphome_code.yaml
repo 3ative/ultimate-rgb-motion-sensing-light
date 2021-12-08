@@ -155,12 +155,8 @@ light:
       - lambda: !lambda |
           auto call = id(led_lights).turn_on();
           call.set_color_mode(ColorMode::RGB);
-          
-          call.set_rgb( (255*0.00001531864)*id(light_red).state,
-          (255*0.00001531864)*id(light_green).state,
-          (255*0.00001531864)*id(light_blue).state);
-          
-          call.set_brightness(id(brightness).state /100);
+          call.set_rgb( id(light_red).state/255,id(light_green).state/255,id(light_blue).state/255);
+          call.set_brightness(id(brightness).state/100);
           call.perform();
 
 output:
