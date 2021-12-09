@@ -5,9 +5,9 @@ esphome:
 
 
 substitutions:
-  # Enter the name of the Room here
+  # Change the Room Name/Location (Can be Capitals) and the Motion Sensor Entity ID from Home Assistant
   name: Shelf
-  motion_sensor: binary_sensor.bedroom_pir2
+  motion_sensor: binary_sensor.my_motion_sensor
 
 
 wifi:
