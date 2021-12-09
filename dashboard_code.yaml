@@ -10,7 +10,7 @@ cards:
               var red = states["number.shelf_r"].state;
               var green = states["number.shelf_g"].state;
               var blue = states["number.shelf_b"].state;
-              return 'radial-gradient(rgb(0,0,0,0%), 80%, rgb('+(red)+','+(green)+','+(blue)+')';
+              return 'radial-gradient(rgb(0,0,0,0%), 70%, rgb('+(red)+','+(green)+','+(blue)+')';
             ]]]
     tap_action:
       action: toggle
