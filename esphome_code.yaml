@@ -3,12 +3,10 @@ esphome:
   platform: ESP8266
   board: esp01_1m
 
-
 substitutions:
   # Change the Room Name/Location (Can be Capitals) and the Motion Sensor Entity ID from Home Assistant
   name: Shelf
   motion_sensor: binary_sensor.my_motion_sensor
-
 
 wifi:
   ssid: !secret wifi_ssid
