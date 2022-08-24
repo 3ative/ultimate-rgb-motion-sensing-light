@@ -1,29 +1,27 @@
 type: vertical-stack
 cards:
   - type: custom:button-card
+    name: ' '
     styles:
       icon:
         - color: var(--button-card-light-color)
       card:
+        - height: 90px
         - background: |
             [[[
-              var red = states["number.shelf_r"].state;
-              var green = states["number.shelf_g"].state;
-              var blue = states["number.shelf_b"].state;
+              var red = states["number.table_r"].state;
+              var green = states["number.table_g"].state;
+              var blue = states["number.table_b"].state;
               return 'radial-gradient(rgb(0,0,0,0%), 70%, rgb('+(red)+','+(green)+','+(blue)+')';
             ]]]
     tap_action:
       action: toggle
-    entity: light.shelf_lights
-  - type: vertical-stack
-    cards:
-      - type: entities
-        entities:
-          - entity: switch.auto_shelf_light
-          - entity: number.shelf_r
-          - entity: number.shelf_g
-          - entity: number.shelf_b
-          - entity: number.shelf_brightness
-          - entity: number.shelf_off_time
-        state_color: false
-        show_header_toggle: false
+    entity: light.table_lights
+  - type: entities
+    entities:
+      - entity: switch.table_light_auto
+      - entity: number.table_r
+      - entity: number.table_g
+      - entity: number.table_b
+      - entity: number.table_brightness
+      - entity: number.table_off_time
