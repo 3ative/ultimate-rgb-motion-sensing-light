@@ -178,7 +178,7 @@ script:
           condition:
             - binary_sensor.is_on: timer
           then:
-            - delay: !lambda return id(off_time).state * 1000;
+            - delay: !lambda return id(off_time).state * 60000;
             - light.turn_off: led_lights
             - lambda: !lambda |-
                 id(timer).publish_state(false);
