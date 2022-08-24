@@ -1,12 +1,12 @@
+substitutions:
+  # Enter the Room Name - Lowercase only please
+  name: table
+  motion_sensor: input_boolean.tut_button
+
 esphome:
-  name: light-shelf
+  name: light-$name
   platform: ESP8266
   board: esp01_1m
-
-substitutions:
-  # Change the Room Name/Location (Can be Capitals) and the Motion Sensor Entity ID from Home Assistant
-  name: Shelf
-  motion_sensor: binary_sensor.my_motion_sensor
 
 wifi:
   ssid: !secret wifi_ssid
@@ -19,7 +19,7 @@ ota:
 number:
   - platform: template
     id: light_red
-    name: ${name} R
+    name: $name R
     icon: mdi:alpha-r-box
     update_interval: never
     optimistic: true
@@ -27,10 +27,18 @@ number:
     max_value: 255
     restore_value: true
     step: 1
+    on_value:
+      then:
+        - if:
+            condition:
+              and:
+                - light.is_on: led_lights
+            then:
+              - script.execute: set_light    
 
   - platform: template
     id: light_green
-    name: ${name} G
+    name: $name G
     icon: mdi:alpha-g-box
     update_interval: never
     optimistic: true
@@ -38,10 +46,18 @@ number:
     max_value: 255
     restore_value: true
     step: 1
+    on_value:
+      then:
+        - if:
+            condition:
+              and:
+                - light.is_on: led_lights
+            then:
+              - script.execute: set_light    
 
   - platform: template
     id: light_blue
-    name: ${name} B
+    name: $name B
     icon: mdi:alpha-b-box
     update_interval: never
     optimistic: true
@@ -49,10 +65,18 @@ number:
     max_value: 255
     restore_value: true
     step: 1
+    on_value:
+      then:
+        - if:
+            condition:
+              and:
+                - light.is_on: led_lights
+            then:
+              - script.execute: set_light    
 
   - platform: template
     id: brightness
-    name: ${name} brightness
+    name: $name brightness
     icon: mdi:alpha-b-box-outline
     update_interval: never
     optimistic: true
@@ -60,22 +84,30 @@ number:
     max_value: 100
     restore_value: true
     step: 1
+    on_value:
+      then:
+        - if:
+            condition:
+              and:
+                - light.is_on: led_lights
+            then:
+              - script.execute: set_light
 
   - platform: template
     id: off_time
-    name: ${name} off time
+    name: $name off time
     icon: mdi:alpha-t-box-outline
     update_interval: never
     optimistic: true
     min_value: 1
     max_value: 20
     restore_value: true
-    step: 1    
+    step: 1
 
 binary_sensor:
   - platform: homeassistant
     id: motion_sensor
-    entity_id: ${motion_sensor}
+    entity_id: $motion_sensor
     internal: true
     on_press:
       then:
@@ -96,7 +128,7 @@ binary_sensor:
             condition:
               - binary_sensor.is_on: timer
             then:
-              - script.execute: timeout 
+              - script.execute: timeout
 
   - platform: template
     id: timer
@@ -115,7 +147,7 @@ binary_sensor:
 switch:
   - platform: template
     id: auto_mode
-    name: Auto ${name} light
+    name: $name light Auto
     icon: mdi:lightbulb-auto
     optimistic: true
     on_turn_off:
@@ -130,6 +162,15 @@ switch:
     internal: true
 
 script:
+  - id: set_light
+    then:
+      - lambda: !lambda |
+          auto call = id(led_lights).turn_on();
+          call.set_color_mode(ColorMode::RGB);
+          call.set_rgb( id(light_red).state/255,id(light_green).state/255,id(light_blue).state/255);
+          call.set_brightness(id(brightness).state/100);
+          call.perform();
+
   - id: timeout
     mode: restart
     then:
@@ -137,25 +178,20 @@ script:
           condition:
             - binary_sensor.is_on: timer
           then:
-            - delay: !lambda return id(off_time).state * 60000;
+            - delay: !lambda return id(off_time).state * 1000;
             - light.turn_off: led_lights
             - lambda: !lambda |-
                 id(timer).publish_state(false);
 
 light:
   - platform: rgb
-    name: "${name} Lights"
+    name: $name Lights
     id: led_lights
     red: red
     green: green
     blue: blue
     on_turn_on:
-      - lambda: !lambda |
-          auto call = id(led_lights).turn_on();
-          call.set_color_mode(ColorMode::RGB);
-          call.set_rgb( id(light_red).state/255,id(light_green).state/255,id(light_blue).state/255);
-          call.set_brightness(id(brightness).state/100);
-          call.perform();
+      - script.execute: set_light
 
 output:
   - platform: esp8266_pwm
