@@ -1,7 +1,7 @@
 type: vertical-stack
 cards:
   - type: custom:button-card
-    name: ' '
+    name: Table
     styles:
       icon:
         - color: var(--button-card-light-color)
@@ -20,8 +20,24 @@ cards:
   - type: entities
     entities:
       - entity: switch.table_light_auto
-      - entity: number.table_r
-      - entity: number.table_g
-      - entity: number.table_b
-      - entity: number.table_brightness
-      - entity: number.table_off_time
+        name: Enable
+      - type: custom:slider-entity-row
+        entity: number.table_r
+        name: Red
+        hide_state: true
+      - type: custom:slider-entity-row
+        entity: number.table_g
+        name: Green
+        hide_state: true
+      - type: custom:slider-entity-row
+        entity: number.table_b
+        name: Blue
+        hide_state: true
+      - type: custom:slider-entity-row
+        entity: number.table_brightness
+        name: Brightness
+        hide_state: false
+      - type: custom:slider-entity-row
+        entity: number.table_off_time
+        name: Timeout
+        hide_state: false
