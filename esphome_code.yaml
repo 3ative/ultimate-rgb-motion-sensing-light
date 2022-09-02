@@ -1,17 +1,18 @@
 substitutions:
-  # Enter the Room Name - Lowercase only please
-  name: table
+  # Enter the Room Name
+  name: Table
   motion_sensor: input_boolean.tut_button
 
 esphome:
-  name: light-$name
+  name: light-table
   platform: ESP8266
   board: esp01_1m
+  esp8266_restore_from_flash: true
 
 wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_password
-
+  
 logger:
 api:
 ota:
@@ -167,7 +168,7 @@ script:
       - lambda: !lambda |
           auto call = id(led_lights).turn_on();
           call.set_color_mode(ColorMode::RGB);
-          call.set_rgb( id(light_red).state/255,id(light_green).state/255,id(light_blue).state/255);
+          call.set_rgb( id(light_red).state/255, id(light_green).state/255, id(light_blue).state/255);
           call.set_brightness(id(brightness).state/100);
           call.perform();
 
@@ -178,7 +179,7 @@ script:
           condition:
             - binary_sensor.is_on: timer
           then:
-            - delay: !lambda return id(off_time).state * 60000;
+            - delay: !lambda return id(off_time).state * 1000;
             - light.turn_off: led_lights
             - lambda: !lambda |-
                 id(timer).publish_state(false);
