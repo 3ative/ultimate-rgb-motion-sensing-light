@@ -1,7 +1,13 @@
 type: vertical-stack
 cards:
   - type: custom:button-card
-    name: Table
+    entity: light.table_lights
+    triggers_update: all
+    name: |
+      [[[
+        return entity.entity_id.slice(6, -7).charAt().toUpperCase() +
+        entity.entity_id.slice(7, -7) + " Light"
+      ]]]
     styles:
       icon:
         - color: var(--button-card-light-color)
@@ -9,14 +15,14 @@ cards:
         - height: 90px
         - background: |
             [[[
-              var red = states["number.table_r"].state;
-              var green = states["number.table_g"].state;
-              var blue = states["number.table_b"].state;
+             var light = "number." + entity.entity_id.slice(6, -7)
+              var red = states[light + "_r"].state;
+              var green = states[light + "_g"].state;
+              var blue = states[light + "_b"].state;
               return 'radial-gradient(rgb(0,0,0,0%), 70%, rgb('+(red)+','+(green)+','+(blue)+')';
             ]]]
     tap_action:
       action: toggle
-    entity: light.table_lights
   - type: entities
     entities:
       - entity: switch.table_light_auto
